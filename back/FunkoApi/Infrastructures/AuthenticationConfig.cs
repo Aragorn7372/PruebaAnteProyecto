@@ -18,7 +18,7 @@ public static class AuthenticationConfig
     {
         Log.Information("🔐 Configurando autenticación JWT...");
 
-        var jwtKey = configuration["Jwt:Key"]
+        var jwtKey = configuration["Mi_Super_Clave_Secreta_Muy_Larga_Y_Segura_Minimo_32_Caracteres"]
             ?? throw new InvalidOperationException("JWT Key no configurada");
         var jwtIssuer = configuration["Jwt:Issuer"] ?? "TiendaApi";
         var jwtAudience = configuration["Jwt:Audience"] ?? "TiendaApi";
