@@ -28,16 +28,16 @@ export class SyncService {
   constructor() {
     this.dbReady = this.initDB();
     this.setupOnlineListener();
-    
+
     // Actualizar contador y sincronizar si hay pendientes
     this.dbReady.then(async () => {
       await this.updatePendingCount();
       const count = this.pendingCount();
-      console.log(`🔢 Operaciones pendientes al inicio: ${count}`);
-      
+      console.log(`Operaciones pendientes al inicio: ${count}`);
+
       // Si hay operaciones pendientes y hay conexión, sincronizar
       if (count > 0 && navigator.onLine) {
-        console.log('🚀 Iniciando sincronización automática al detectar operaciones pendientes...');
+        console.log('Iniciando sincronización automática al detectar operaciones pendientes...');
         setTimeout(() => this.syncPendingOperations(), 2000);
       }
     });
@@ -49,7 +49,7 @@ export class SyncService {
 
       request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
         const db = (event.target as IDBOpenDBRequest).result;
-        
+
         // Store de funkos (ya existe)
         if (!db.objectStoreNames.contains('Funkos')) {
           db.createObjectStore('Funkos', { keyPath: 'id', autoIncrement: true });
@@ -57,9 +57,9 @@ export class SyncService {
 
         // Store de operaciones pendientes
         if (!db.objectStoreNames.contains(this.SYNC_STORE)) {
-          const store = db.createObjectStore(this.SYNC_STORE, { 
-            keyPath: 'id', 
-            autoIncrement: true 
+          const store = db.createObjectStore(this.SYNC_STORE, {
+            keyPath: 'id',
+            autoIncrement: true,
           });
           store.createIndex('type', 'type', { unique: false });
           store.createIndex('timestamp', 'timestamp', { unique: false });
@@ -91,21 +91,24 @@ export class SyncService {
     const offline$ = fromEvent(window, 'offline');
 
     // Log estado inicial
-    console.log('🌐 Estado inicial de conexión:', navigator.onLine ? 'ONLINE' : 'OFFLINE');
+    console.log('Estado inicial de conexión:', navigator.onLine ? 'ONLINE' : 'OFFLINE');
     this.isOnline.set(navigator.onLine);
 
     merge(online$, offline$)
       .pipe(debounceTime(500))
       .subscribe(() => {
         const isNowOnline = navigator.onLine;
-        console.log('🔄 Cambio de estado de conexión detectado:', isNowOnline ? 'ONLINE' : 'OFFLINE');
+        console.log(
+          'Cambio de estado de conexión detectado:',
+          isNowOnline ? 'ONLINE' : 'OFFLINE',
+        );
         this.isOnline.set(isNowOnline);
-        
+
         if (isNowOnline) {
-          console.log('🌐 Conexión restaurada, iniciando sincronización...');
+          console.log('Conexión restaurada, iniciando sincronización...');
           setTimeout(() => this.syncPendingOperations(), 1000);
         } else {
-          console.log('📴 Sin conexión a Internet');
+          console.log('Sin conexión a Internet');
         }
       });
   }
@@ -120,7 +123,9 @@ export class SyncService {
   /**
    * Registra una operación pendiente para sincronizar más tarde
    */
-  async addPendingOperation(operation: Omit<PendingOperation, 'id' | 'timestamp' | 'retries'>): Promise<void> {
+  async addPendingOperation(
+    operation: Omit<PendingOperation, 'id' | 'timestamp' | 'retries'>,
+  ): Promise<void> {
     const db = await this.ensureDB();
     const pendingOp: Omit<PendingOperation, 'id'> = {
       ...operation,
@@ -134,12 +139,14 @@ export class SyncService {
       const request = store.add(pendingOp);
 
       request.onsuccess = () => {
-        console.log(`📝 Operación ${operation.type} registrada para sincronizar (ID: ${request.result})`);
+        console.log(
+          `Operación ${operation.type} registrada para sincronizar (ID: ${request.result})`,
+        );
         this.updatePendingCount();
         resolve();
       };
       request.onerror = () => {
-        console.error('❌ Error registrando operación pendiente:', request.error);
+        console.error('Error registrando operación pendiente:', request.error);
         reject(request.error ?? new Error('Failed to add pending operation'));
       };
     });
@@ -156,7 +163,8 @@ export class SyncService {
       const request = store.getAll();
 
       request.onsuccess = () => resolve(request.result as PendingOperation[]);
-      request.onerror = () => reject(request.error ?? new Error('Failed to get pending operations'));
+      request.onerror = () =>
+        reject(request.error ?? new Error('Failed to get pending operations'));
     });
   }
 
@@ -171,7 +179,8 @@ export class SyncService {
       const request = store.delete(id);
 
       request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error ?? new Error('Failed to delete pending operation'));
+      request.onerror = () =>
+        reject(request.error ?? new Error('Failed to delete pending operation'));
     });
   }
 
@@ -192,29 +201,32 @@ export class SyncService {
    */
   async syncPendingOperations(): Promise<void> {
     if (!navigator.onLine || this.isSyncing()) {
-      console.log('⏸️ Sincronización omitida:', !navigator.onLine ? 'Sin conexión' : 'Ya sincronizando');
+      console.log(
+        'Sincronización omitida:',
+        !navigator.onLine ? 'Sin conexión' : 'Ya sincronizando',
+      );
       return;
     }
 
     if (!this.funkoServiceRef) {
-      console.warn('⚠️ FunkoService no está registrado todavía');
+      console.warn('FunkoService no está registrado todavía');
       return;
     }
 
     this.isSyncing.set(true);
-    console.log('🔄 Iniciando sincronización...');
+    console.log('Iniciando sincronización...');
 
     try {
       const operations = await this.getPendingOperations();
-      console.log(`📊 Operaciones pendientes encontradas: ${operations.length}`);
-      
+      console.log(`Operaciones pendientes encontradas: ${operations.length}`);
+
       if (operations.length === 0) {
-        console.log('✅ No hay operaciones pendientes');
+        console.log('No hay operaciones pendientes');
         this.isSyncing.set(false);
         return;
       }
 
-      console.log(`📤 Sincronizando ${operations.length} operaciones...`);
+      console.log(`Sincronizando ${operations.length} operaciones...`);
 
       // Ordenar por timestamp
       operations.sort((a, b) => a.timestamp - b.timestamp);
@@ -224,26 +236,26 @@ export class SyncService {
 
       for (const operation of operations) {
         try {
-          console.log(`🔧 Procesando operación ${operation.type} (ID: ${operation.id})...`);
+          console.log(`Procesando operación ${operation.type} (ID: ${operation.id})...`);
           // Ejecutar la operación usando el FunkoService
           await this.funkoServiceRef.executePendingOperation(operation);
-          
+
           // Si tuvo éxito, eliminar de pendientes
           if (operation.id) {
             await this.deletePendingOperation(operation.id);
             successCount++;
-            console.log(`✅ Operación ${operation.type} sincronizada correctamente`);
+            console.log(`Operación ${operation.type} sincronizada correctamente`);
           }
         } catch (err) {
-          console.error(`❌ Error sincronizando operación ${operation.id}:`, err);
+          console.error(`Error sincronizando operación ${operation.id}:`, err);
           failCount++;
         }
       }
 
       await this.updatePendingCount();
-      console.log(`🎯 Sincronización completada: ${successCount} exitosas, ${failCount} fallidas`);
+      console.log(`Sincronización completada: ${successCount} exitosas, ${failCount} fallidas`);
     } catch (err) {
-      console.error('❌ Error durante la sincronización:', err);
+      console.error('Error durante la sincronización:', err);
     } finally {
       this.isSyncing.set(false);
     }
@@ -263,7 +275,8 @@ export class SyncService {
         this.updatePendingCount();
         resolve();
       };
-      request.onerror = () => reject(request.error ?? new Error('Failed to clear pending operations'));
+      request.onerror = () =>
+        reject(request.error ?? new Error('Failed to clear pending operations'));
     });
   }
 }

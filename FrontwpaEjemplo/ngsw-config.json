@@ -26,5 +26,38 @@
         ]
       }
     }
-  ]
+  ],
+  "dataGroups": [
+    {
+      "name": "api-funkos",
+      "urls": [
+        "https://pruebaanteproyecto.onrender.com/api/funkos/**",
+        "https://pruebaanteproyecto.onrender.com/api/category/**"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 100,
+        "maxAge": "1h",
+        "timeout": "5s"
+      }
+    },
+    {
+      "name": "api-cache-fallback",
+      "urls": [
+        "https://pruebaanteproyecto.onrender.com/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 50,
+        "maxAge": "7d"
+      }
+    }
+  ],
+  "navigationUrls": [
+    "/**",
+    "!/**/*.*",
+    "!/**/*__*",
+    "!/**/*__*/**"
+  ],
+  "navigationRequestStrategy": "freshness"
 }

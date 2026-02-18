@@ -39,13 +39,13 @@ export class IndexDbService {
 
       request.onsuccess = (event: Event) => {
         this.db = (event.target as IDBOpenDBRequest).result;
-        console.log('✅ IndexedDB inicializada correctamente (v2)');
+        console.log('IndexedDB inicializada correctamente (v2)');
         resolve(this.db);
       };
 
       request.onerror = (event: Event) => {
         const error = (event.target as IDBOpenDBRequest).error;
-        console.error('❌ Error initializing database:', error);
+        console.error('Error initializing database:', error);
         reject(error);
       };
     });

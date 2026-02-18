@@ -79,12 +79,12 @@ export class FunkoService {
               console.warn('Error guardando en IndexDB:', err);
             }
           }
-          console.log('✅ Funkos guardados en IndexDB para uso offline');
+          console.log('Funkos guardados en IndexDB para uso offline');
         },
         error: (err) => console.error('Error obteniendo funkos del servidor:', err),
       }),
       catchError((error) => {
-        console.warn('📴 Sin conexión, cargando desde IndexDB');
+        console.warn('Sin conexión, cargando desde IndexDB');
         return from(this.db.getAllData<Funko>());
       }),
     );
@@ -145,7 +145,7 @@ export class FunkoService {
           error: (err) => console.error('Error creando funko:', err),
         }),
         catchError((error) => {
-          console.warn('📴 Sin conexión, guardando en IndexDB como pendiente');
+          console.warn('Sin conexión, guardando en IndexDB como pendiente');
           return from((async () => {
             const offlineFunko: Funko = {
               nombre,
@@ -165,7 +165,7 @@ export class FunkoService {
               data: { nombre, precio, categoria, file },
             });
             
-            console.log('✓ Funko guardado localmente, se sincronizará cuando haya conexión');
+            console.log('Funko guardado localmente, se sincronizará cuando haya conexión');
             return savedFunko;
           })());
         }),
@@ -205,7 +205,7 @@ export class FunkoService {
           error: (err) => console.error('Error actualizando funko:', err),
         }),
         catchError((error) => {
-          console.warn('📴 Sin conexión, actualizando en IndexDB');
+          console.warn('Sin conexión, actualizando en IndexDB');
           return from((async () => {
             const offlineFunko: Funko & { id: number } = {
               id,
@@ -224,7 +224,7 @@ export class FunkoService {
               data: { id, nombre, precio, categoria, file },
             });
             
-            console.log('✓ Funko actualizado localmente, se sincronizará cuando haya conexión');
+            console.log('Funko actualizado localmente, se sincronizará cuando haya conexión');
             return offlineFunko;
           })());
         }),
@@ -284,9 +284,9 @@ export class FunkoService {
         default:
           throw new Error(`Tipo de operación desconocido: ${type}`);
       }
-      console.log(`✓ Operación ${type} ejecutada correctamente`);
+      console.log(`Operación ${type} ejecutada correctamente`);
     } catch (error) {
-      console.error(`✗ Error ejecutando operación ${type}:`, error);
+      console.error(`Error ejecutando operación ${type}:`, error);
       throw error;
     }
   }
