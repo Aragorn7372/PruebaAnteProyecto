@@ -1,11 +1,27 @@
-<div class="min-h-screen flex items-center justify-center bg-base-200">
-  <div class="card w-96 bg-base-100 shadow-xl">
-    <div class="card-body">
-      <h2 class="card-title justify-center text-2xl mb-4">Iniciar Sesión</h2>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10 relative overflow-hidden">
+  <!-- Elementos decorativos -->
+  <div class="absolute top-20 left-20 text-9xl opacity-5">🎭</div>
+  <div class="absolute bottom-20 right-20 text-9xl opacity-5">🎨</div>
+  
+  <div class="card w-full max-w-md bg-base-100 shadow-2xl border border-base-300 relative z-10">
+    <!-- Header con gradiente -->
+    <div class="bg-gradient-to-r from-primary to-secondary p-8 rounded-t-2xl">
+      <div class="flex justify-center mb-4">
+        <div class="avatar placeholder">
+          <div class="bg-base-100 text-primary rounded-full w-20 h-20 shadow-xl">
+            <span class="text-4xl">🔐</span>
+          </div>
+        </div>
+      </div>
+      <h2 class="text-3xl font-bold text-center text-primary-content mb-2">Bienvenido</h2>
+      <p class="text-center text-primary-content/80">Inicia sesión para continuar</p>
+    </div>
+    
+    <div class="card-body p-8">
 
-      <!-- Error Alert -->
+      <!-- Error Alert mejorada -->
       @if (errorMessage()) {
-        <div class="alert alert-error mb-4">
+        <div class="alert alert-error mb-6 shadow-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="stroke-current shrink-0 h-6 w-6"
@@ -23,17 +39,22 @@
         </div>
       }
 
-      <!-- Login Form -->
-      <form (ngSubmit)="onSubmit()">
+      <!-- Login Form mejorado -->
+      <form (ngSubmit)="onSubmit()" class="space-y-6">
         <!-- Username -->
-        <div class="form-control mb-4">
+        <div class="form-control">
           <label class="label">
-            <span class="label-text">Usuario</span>
+            <span class="label-text font-semibold flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              Usuario
+            </span>
           </label>
           <input
             type="text"
             placeholder="Introduce tu usuario"
-            class="input input-bordered w-full"
+            class="input input-bordered w-full input-lg focus:input-primary transition-all"
             [value]="username()"
             (input)="username.set($any($event.target).value)"
             required
@@ -41,14 +62,19 @@
         </div>
 
         <!-- Password -->
-        <div class="form-control mb-6">
+        <div class="form-control">
           <label class="label">
-            <span class="label-text">Contraseña</span>
+            <span class="label-text font-semibold flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Contraseña
+            </span>
           </label>
           <input
             type="password"
-            placeholder="Introduce tu contraseña"
-            class="input input-bordered w-full"
+            placeholder="••••••••"
+            class="input input-bordered w-full input-lg focus:input-primary transition-all"
             [value]="password()"
             (input)="password.set($any($event.target).value)"
             required
@@ -56,24 +82,30 @@
         </div>
 
         <!-- Submit Button -->
-        <div class="form-control">
-          <button type="submit" class="btn btn-primary w-full" [disabled]="loading()">
+        <div class="form-control pt-2">
+          <button type="submit" class="btn btn-primary w-full btn-lg gap-2 shadow-xl hover:scale-105 transition-transform" [disabled]="loading()">
             @if (loading()) {
               <span class="loading loading-spinner"></span>
-              Iniciando sesión...
+              <span>Iniciando sesión...</span>
             } @else {
-              Iniciar Sesión
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+              <span>Iniciar Sesión</span>
             }
           </button>
         </div>
       </form>
 
-      <!-- Register Link -->
+      <!-- Register Link con mejor diseño -->
       <div class="divider">O</div>
-      <div class="text-center">
-        <p class="text-sm">
+      <div class="text-center bg-base-200/50 p-4 rounded-xl">
+        <p class="text-sm flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
           ¿No tienes cuenta?
-          <a routerLink="/register" class="link link-primary">Regístrate aquí</a>
+          <a routerLink="/register" class="link link-primary font-semibold">Regístrate aquí</a>
         </p>
       </div>
     </div>

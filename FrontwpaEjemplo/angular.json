@@ -20,10 +20,10 @@
             "outputPath": "dist/frontwpa-ejemplo",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "css",
             "assets": [
               "public"
-            ]
-          ,
+            ],
             "styles": [
               "src/styles.css"
             ]
