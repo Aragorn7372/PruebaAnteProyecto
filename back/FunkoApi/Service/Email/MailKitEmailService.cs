@@ -40,7 +40,7 @@ public class MailKitEmailService(
             }
 
             var mimeMessage = new MimeMessage();
-            mimeMessage.From.Add(new MailboxAddress(fromName, fromEmail));
+            if (fromEmail != null) mimeMessage.From.Add(new MailboxAddress(fromName, fromEmail));
             mimeMessage.To.Add(MailboxAddress.Parse(message.To));
             mimeMessage.Subject = message.Subject;
 
