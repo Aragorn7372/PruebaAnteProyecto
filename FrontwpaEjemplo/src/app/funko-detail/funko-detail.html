@@ -1,0 +1,199 @@
+<div class="container mx-auto p-6 max-w-7xl">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="flex flex-col justify-center items-center h-64 gap-4">
+    <span class="loading loading-spinner loading-lg text-primary glow-pulse"></span>
+    <p class="text-base-content/70 animate-pulse text-lg">Cargando detalle...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="text-center py-20">
+    <div class="alert alert-error max-w-md mx-auto">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+    <a routerLink="/lista" class="btn btn-primary mt-4">Volver a la lista</a>
+  </div>
+
+  <!-- Funko Detail -->
+  <div *ngIf="!loading && funko" class="animate-fade-in">
+    <!-- Back Button -->
+    <a routerLink="/lista" class="btn btn-ghost btn-sm gap-2 mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Volver a la lista
+    </a>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Image Section -->
+      <div class="card bg-base-100 shadow-2xl border border-primary/20 overflow-hidden">
+        <figure class="p-6">
+          <img
+            [src]="getImageUrl(funko.imagen)"
+            [alt]="funko.nombre"
+            class="rounded-xl w-full max-w-md object-cover border-2 border-primary/30"
+          />
+        </figure>
+      </div>
+
+      <!-- Info Section -->
+      <div class="card bg-base-100 shadow-2xl border border-primary/20">
+        <div class="card-body">
+          <h1 class="text-4xl font-black gradient-text mb-4">{{ funko.nombre }}</h1>
+          
+          <div class="badge badge-secondary badge-lg gap-2 font-semibold shadow-lg glow mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            {{ funko.categoria }}
+          </div>
+
+          <div class="divider my-4"></div>
+
+          <div class="mb-6">
+            <p class="text-xs text-base-content/60 mb-1 uppercase tracking-wider">Precio</p>
+            <span class="text-5xl font-black gradient-text animate-pulse">
+              {{ funko.precio | currency: 'EUR' }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+            <!-- Generate QR Button -->
+            <button (click)="generateQR()" class="btn btn-primary gap-2 shadow-lg hover:scale-105 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+              </svg>
+              Generar QR
+            </button>
+
+            <!-- Generate Barcode Button -->
+            <button (click)="generateBarcode()" class="btn btn-secondary gap-2 shadow-lg hover:scale-105 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Código Barras
+            </button>
+
+            <!-- Scan Button -->
+            <button (click)="toggleScanner()" class="btn btn-accent gap-2 shadow-lg hover:scale-105 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Escanear
+            </button>
+          </div>
+
+          <!-- Edit Button (if logged in) -->
+          <div *ngIf="authService.isLoggedIn()" class="mt-6">
+            <a [routerLink]="['/funko/edit', funko.id]" class="btn btn-outline btn-warning gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Editar Funko
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Modal -->
+    <dialog [open]="showQR" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box bg-base-100 shadow-2xl">
+        <h3 class="font-bold text-2xl mb-4 gradient-text">Código QR - {{ funko.nombre }}</h3>
+        
+        <div id="print-area" class="flex flex-col items-center p-6 bg-white rounded-xl">
+          <div id="qr-area" class="mb-4">
+            <qrcode [qrdata]="getQRData()" [width]="250" [margin]="2"></qrcode>
+          </div>
+          <p class="text-sm text-gray-600 mt-2">ID: {{ funko.id }} | {{ funko.nombre }}</p>
+        </div>
+
+        <div class="modal-action flex gap-2">
+          <button (click)="downloadQR()" class="btn btn-primary gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Descargar
+          </button>
+          <button (click)="printCode()" class="btn btn-secondary gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            Imprimir
+          </button>
+          <button (click)="closeModal()" class="btn btn-ghost">Cerrar</button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button (click)="closeModal()">close</button>
+      </form>
+    </dialog>
+
+    <!-- Barcode Modal -->
+    <dialog [open]="showBarcode" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box bg-base-100 shadow-2xl">
+        <h3 class="font-bold text-2xl mb-4 gradient-text">Código de Barras - {{ funko.nombre }}</h3>
+        
+        <div id="print-area" class="flex flex-col items-center p-6 bg-white rounded-xl">
+          <div id="barcode-area" class="mb-4">
+            <img id="barcode-img" alt="Barcode" />
+          </div>
+          <p class="text-sm text-gray-600 mt-2">ID: {{ funko.id }} | {{ funko.nombre }}</p>
+        </div>
+
+        <div class="modal-action flex gap-2">
+          <button (click)="downloadBarcode()" class="btn btn-primary gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Descargar
+          </button>
+          <button (click)="printCode()" class="btn btn-secondary gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            Imprimir
+          </button>
+          <button (click)="closeModal()" class="btn btn-ghost">Cerrar</button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button (click)="closeModal()">close</button>
+      </form>
+    </dialog>
+
+    <!-- Scanner Modal -->
+    <dialog [open]="showScanner" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box bg-base-100 shadow-2xl max-w-2xl">
+        <h3 class="font-bold text-2xl mb-4 gradient-text">Escanear Código QR</h3>
+        
+        <div class="flex flex-col items-center p-4">
+          <zxing-scanner
+            [formats]="allowedFormats"
+            (scanSuccess)="onScanSuccess($event)"
+            class="w-full max-w-sm"
+          ></zxing-scanner>
+          
+          <div *ngIf="scannedResult" class="mt-4 p-4 bg-success/20 rounded-lg w-full">
+            <p class="font-bold text-success">Código escaneado:</p>
+            <p class="text-sm break-all">{{ scannedResult }}</p>
+          </div>
+          
+          <p *ngIf="!scannedResult" class="text-sm text-base-content/60 mt-4">
+            Apunta la cámara al código QR para escanear
+          </p>
+        </div>
+
+        <div class="modal-action">
+          <button (click)="closeModal()" class="btn btn-ghost">Cerrar</button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button (click)="closeModal()">close</button>
+      </form>
+    </dialog>
+  </div>
+</div>

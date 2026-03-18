@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FunkoService, Funko } from '../services/funko.service';
 import { AuthService } from '../services/auth.service';
 
@@ -12,6 +12,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class Lista implements OnInit {
   private funkoService = inject(FunkoService);
+  private router = inject(Router);
   protected authService = inject(AuthService);
 
   funkos: Funko[] = [];
@@ -44,5 +45,9 @@ export class Lista implements OnInit {
       return imagen;
     }
     return `https://pruebaanteproyecto.onrender.com/uploads/${imagen}`;
+  }
+
+  goToDetail(funko: Funko): void {
+    this.router.navigate(['/funko/detail', funko.id], { state: { funko } });
   }
 }

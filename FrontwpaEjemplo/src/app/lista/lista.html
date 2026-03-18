@@ -22,7 +22,7 @@
   <!-- Funkos Grid mejorado dark mode -->
   <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     @for (funko of funkos; track funko.id) {
-      <div class="card bg-base-100 shadow-2xl hover:shadow-primary/50 transition-all duration-500 hover:-translate-y-3 group border border-primary/20 overflow-hidden backdrop-blur-sm glow-hover">
+      <div (click)="goToDetail(funko)" class="card bg-base-100 shadow-2xl hover:shadow-primary/50 transition-all duration-500 hover:-translate-y-3 group border border-primary/20 overflow-hidden backdrop-blur-sm glow-hover cursor-pointer">
         <figure class="px-4 pt-4 relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-t from-primary/30 via-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 z-10"></div>
           <div class="absolute top-2 right-2 z-20">
