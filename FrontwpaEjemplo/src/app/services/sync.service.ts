@@ -136,7 +136,27 @@ export class SyncService {
 
     if (enabled && navigator.onLine && syncIfEnabled) {
       this.syncPendingOperations(true);
-      this.tryRunInitialOnlineBootstrap();
+      this.refreshData();
+    }
+  }
+
+  async refreshData(): Promise<void> {
+    if (!this.funkoServiceRef || !navigator.onLine) {
+      console.log('No se puede refrescar datos: sin servicio o sin conexión');
+      return;
+    }
+
+    const downloadInitialData = this.funkoServiceRef.downloadInitialData;
+    if (typeof downloadInitialData !== 'function') {
+      console.warn('Método downloadInitialData no disponible');
+      return;
+    }
+
+    try {
+      await downloadInitialData.call(this.funkoServiceRef);
+      console.log('Datos refrescados correctamente');
+    } catch (error) {
+      console.warn('Error refrescando datos:', error);
     }
   }
 

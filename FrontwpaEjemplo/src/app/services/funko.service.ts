@@ -58,11 +58,43 @@ export class FunkoService {
   }
 
   async downloadInitialData(): Promise<void> {
-    if (!navigator.onLine) {
+    if (!navigator.onLine || !this.syncService.autoSyncEnabled()) {
       return;
     }
 
-    await firstValueFrom(this.getFunkos());
+    await firstValueFrom(this.getFunkosFromServer());
+  }
+
+  private getFunkosFromServer(): Observable<Funko[]> {
+    return this.http.get<Funko[]>(this.API_URL).pipe(
+      timeout(this.REQUEST_TIMEOUT_MS),
+      tap({
+        next: async (funkos) => {
+          for (const funko of funkos) {
+            try {
+              if (funko.id) {
+                const existing = await this.db.getById<Funko>(funko.id);
+                if (existing) {
+                  await this.db.updateData(funko as Funko & { id: number });
+                } else {
+                  await this.db.addData(funko);
+                }
+              } else {
+                await this.db.addData(funko);
+              }
+            } catch (err) {
+              console.warn('Error guardando en IndexDB:', err);
+            }
+          }
+          console.log('Funkos guardados en IndexDB para uso offline');
+        },
+        error: (err) => console.error('Error obteniendo funkos del servidor:', err),
+      }),
+      catchError((error) => {
+        console.warn('Sin conexión, cargando desde IndexDB');
+        return from(this.db.getAllData<Funko>());
+      }),
+    );
   }
 
   private getAuthHeaders(): HttpHeaders {
