@@ -46,7 +46,9 @@ export class SyncService {
         setTimeout(() => this.syncPendingOperations(), 2000);
       }
 
-      this.tryRunInitialOnlineBootstrap();
+      if (this.autoSyncEnabled()) {
+        this.tryRunInitialOnlineBootstrap();
+      }
     });
   }
 
@@ -163,6 +165,11 @@ export class SyncService {
   }
 
   private async tryRunInitialOnlineBootstrap(): Promise<void> {
+    if (!this.autoSyncEnabled()) {
+      console.log('Auto-sync desactivado, omitiendo bootstrap inicial');
+      return;
+    }
+    
     if (!this.pendingInitialOnlineBootstrap || !navigator.onLine || !this.funkoServiceRef) {
       return;
     }
@@ -187,7 +194,9 @@ export class SyncService {
    */
   setFunkoService(funkoService: any): void {
     this.funkoServiceRef = funkoService;
-    this.tryRunInitialOnlineBootstrap();
+    if (this.autoSyncEnabled()) {
+      this.tryRunInitialOnlineBootstrap();
+    }
   }
 
   /**
