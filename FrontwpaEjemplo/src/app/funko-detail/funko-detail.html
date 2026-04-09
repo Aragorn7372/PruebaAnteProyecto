@@ -168,7 +168,7 @@
     <!-- Scanner Modal -->
     <dialog [open]="showScanner" class="modal modal-bottom sm:modal-middle">
       <div class="modal-box bg-base-100 shadow-2xl max-w-2xl">
-        <h3 class="font-bold text-2xl mb-4 gradient-text">Escanear Código QR</h3>
+        <h3 class="font-bold text-2xl mb-4 gradient-text">Escanear Código</h3>
         
         <div class="flex flex-col items-center p-4">
           <zxing-scanner
@@ -183,7 +183,7 @@
           </div>
           
           <p *ngIf="!scannedResult" class="text-sm text-base-content/60 mt-4">
-            Apunta la cámara al código QR para escanear
+            Apunta la cámara al código QR o código de barras
           </p>
         </div>
 

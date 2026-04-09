@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Funko } from '../services/funko.service';
 import { AuthService } from '../services/auth.service';
@@ -18,6 +18,7 @@ import JsBarcode from 'jsbarcode';
 })
 export class FunkoDetail implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   protected authService = inject(AuthService);
 
   funko: Funko | null = null;
@@ -103,6 +104,12 @@ export class FunkoDetail implements OnInit {
   onScanSuccess(result: string): void {
     this.scannedResult = result;
     console.log('Código escaneado:', result);
+    
+    const numericId = parseInt(result, 10);
+    if (!isNaN(numericId) && numericId > 0) {
+      this.closeModal();
+      this.router.navigate(['/funko/detail', numericId], { state: { fromScanner: true } });
+    }
   }
 
   printCode(): void {
@@ -216,7 +223,7 @@ export class FunkoDetail implements OnInit {
   }
 
   getBarcodeValue(): string {
-    if (!this.funko) return '';
-    return `${window.location.origin}/funko/detail/${this.funko.id}`;
+    if (!this.funko?.id) return '';
+    return this.funko.id.toString();
   }
 }
