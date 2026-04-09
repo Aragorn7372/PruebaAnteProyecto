@@ -3,6 +3,7 @@ import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
 import { SyncStatus } from './sync-status/sync-status';
+import { SyncWorkerService } from './services/sync-worker.service';
 
 @Component({
   selector: 'app-root',
@@ -12,4 +13,5 @@ import { SyncStatus } from './sync-status/sync-status';
 })
 export class App {
   protected authService = inject(AuthService);
+  private syncWorker = inject(SyncWorkerService);
 }

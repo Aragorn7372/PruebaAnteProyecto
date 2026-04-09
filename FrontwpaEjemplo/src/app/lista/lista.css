@@ -1,0 +1,13 @@
+.card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  :host .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
