@@ -128,11 +128,11 @@ export class SyncService {
       });
   }
 
-  setAutoSyncEnabled(enabled: boolean): void {
+  setAutoSyncEnabled(enabled: boolean, syncIfEnabled = true): void {
     this.autoSyncEnabled.set(enabled);
     localStorage.setItem(this.AUTO_SYNC_KEY, String(enabled));
 
-    if (enabled && navigator.onLine) {
+    if (enabled && navigator.onLine && syncIfEnabled) {
       this.syncPendingOperations(true);
       this.tryRunInitialOnlineBootstrap();
     }
@@ -144,7 +144,8 @@ export class SyncService {
 
   activateAndSync(): void {
     if (!this.autoSyncEnabled()) {
-      this.setAutoSyncEnabled(true);
+      // Si está desactivado, solo activar. La sincronización se hará cuando el usuario la solicite de nuevo.
+      this.setAutoSyncEnabled(true, false);
       return;
     }
 
