@@ -73,8 +73,8 @@ export class FunkoService {
   }
 
   getFunkos(): Observable<Funko[]> {
-    if (!navigator.onLine) {
-      console.log('Modo offline detectado: cargando funkos desde IndexedDB');
+    if (!navigator.onLine || !this.syncService.autoSyncEnabled()) {
+      console.log('Modo offline o auto-sync desactivado: cargando funkos desde IndexedDB');
       return from(this.db.getAllData<Funko>());
     }
 
@@ -112,8 +112,8 @@ export class FunkoService {
   }
 
   getFunko(id: number): Observable<Funko> {
-    if (!navigator.onLine) {
-      console.log(`Modo offline detectado: cargando funko ${id} desde IndexedDB`);
+    if (!navigator.onLine || !this.syncService.autoSyncEnabled()) {
+      console.log(`Modo offline o auto-sync desactivado: cargando funko ${id} desde IndexedDB`);
       return from(this.db.getById<Funko>(id)).pipe(
         switchMap((funko) => (funko ? of(funko) : of({} as Funko))),
       );
