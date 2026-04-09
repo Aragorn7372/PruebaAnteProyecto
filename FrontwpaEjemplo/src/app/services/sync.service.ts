@@ -122,8 +122,8 @@ export class SyncService {
           if (this.autoSyncEnabled()) {
             console.log('Conexión restaurada, iniciando sincronización...');
             setTimeout(() => this.syncPendingOperations(), 1000);
+            this.tryRunInitialOnlineBootstrap();
           }
-          this.tryRunInitialOnlineBootstrap();
         } else {
           console.log('Sin conexión a Internet');
         }
@@ -155,6 +155,11 @@ export class SyncService {
   }
 
   onLoginSuccess(): void {
+    if (!this.autoSyncEnabled()) {
+      console.log('Auto-sync desactivado, omitiendo sincronización en login');
+      return;
+    }
+
     const initialBootstrapDone = localStorage.getItem(this.INITIAL_BOOTSTRAP_DONE_KEY) === 'true';
 
     if (!initialBootstrapDone) {
