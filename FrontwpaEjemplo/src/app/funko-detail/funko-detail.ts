@@ -29,7 +29,18 @@ export class FunkoDetail implements OnInit {
   showScanner: boolean = false;
   scannedResult: string = '';
 
-  allowedFormats = [BarcodeFormat.QR_CODE];
+  allowedFormats = [
+    BarcodeFormat.QR_CODE,
+    BarcodeFormat.EAN_13,
+    BarcodeFormat.EAN_8,
+    BarcodeFormat.CODE_128,
+    BarcodeFormat.CODE_39,
+    BarcodeFormat.UPC_A,
+    BarcodeFormat.UPC_E,
+    BarcodeFormat.ITF,
+    BarcodeFormat.RSS_14,
+    BarcodeFormat.DATA_MATRIX,
+  ];
 
   ngOnInit(): void {
     const state = window.history.state;
