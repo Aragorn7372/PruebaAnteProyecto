@@ -2,6 +2,7 @@
 
 namespace FunkoApi.config;
 
+
 public class StorageSettings
 {
     /// <summary>
