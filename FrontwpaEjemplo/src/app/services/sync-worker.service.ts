@@ -24,16 +24,18 @@ export class SyncWorkerService {
     }
 
     try {
-      // Primero registrar el NGSW que Angular genera
       const ngswReg = await navigator.serviceWorker.getRegistrations();
       console.log('[SyncWorkerService] Registros SW encontrados:', ngswReg.length);
 
-      // Escuchar mensajes de cualquier SW
       this.setupWorkerMessageListener();
 
-      // Solicitar sincronización inicial
-      await this.requestBackgroundSync();
-      this.workerReady.set(true);
+      if (this.syncService.autoSyncEnabled()) {
+        await this.requestBackgroundSync();
+        this.workerReady.set(true);
+      } else {
+        console.log('[SyncWorkerService] Auto-sync desactivado, no se solicitara sincronización inicial');
+        this.workerReady.set(true);
+      }
     } catch (error) {
       console.error('[SyncWorkerService] Error inicializando:', error);
     }
@@ -57,7 +59,9 @@ export class SyncWorkerService {
 
       if (type === 'BACKGROUND_SYNC_DETECTED') {
         console.log(`[SyncWorkerService] Sincronización detectada:`, event.data.count);
-        this.syncService.syncPendingOperations(true);
+        if (this.syncService.autoSyncEnabled()) {
+          this.syncService.syncPendingOperations(true);
+        }
       }
 
       if (type === 'SYNC_COMPLETE') {
@@ -113,7 +117,10 @@ export class SyncWorkerService {
   private setupOnlineOfflineHandlers(): void {
     window.addEventListener('online', () => {
       console.log('[SyncWorkerService] Online event detectado');
-      // Esperar un poco para que la red esté realmente lista
+      if (!this.syncService.autoSyncEnabled()) {
+        console.log('[SyncWorkerService] Auto-sync desactivado, omitiendo sincronización');
+        return;
+      }
       setTimeout(() => {
         this.requestBackgroundSync();
         this.syncService.syncPendingOperations(true);

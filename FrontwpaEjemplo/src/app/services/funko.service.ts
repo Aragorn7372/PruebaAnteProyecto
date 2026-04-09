@@ -43,11 +43,9 @@ export class FunkoService {
   private readonly REQUEST_TIMEOUT_MS = 8000;
 
   constructor() {
-    // Registrar este servicio en SyncService para evitar dependencia circular
     this.syncService.setFunkoService(this);
 
-    // Intentar sincronizar al arrancar si hay conexión
-    if (navigator.onLine) {
+    if (navigator.onLine && this.syncService.autoSyncEnabled()) {
       this.syncService.syncPendingOperations();
     }
   }
