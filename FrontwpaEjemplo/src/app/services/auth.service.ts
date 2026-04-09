@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
+import { SyncService } from './sync.service';
 
 export interface LoginDto {
   username: string;
@@ -28,14 +29,15 @@ export interface AuthResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  
+  private syncService = inject(SyncService);
+
   private readonly API_URL = 'https://pruebaanteproyecto.onrender.com/api/auth';
-  
+
   currentUser = signal<UserDto | null>(null);
   isLoggedIn = signal<boolean>(false);
 
@@ -54,23 +56,25 @@ export class AuthService {
 
   login(credentials: LoginDto) {
     return this.http.post<AuthResponse>(`${this.API_URL}/signin`, credentials).pipe(
-      tap(response => {
+      tap((response) => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         this.currentUser.set(response.user);
         this.isLoggedIn.set(true);
-      })
+        this.syncService.onLoginSuccess();
+      }),
     );
   }
 
   register(data: RegisterDto) {
     return this.http.post<AuthResponse>(`${this.API_URL}/signup`, data).pipe(
-      tap(response => {
+      tap((response) => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         this.currentUser.set(response.user);
         this.isLoggedIn.set(true);
-      })
+        this.syncService.onLoginSuccess();
+      }),
     );
   }
 

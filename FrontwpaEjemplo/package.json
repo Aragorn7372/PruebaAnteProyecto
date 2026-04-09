@@ -34,6 +34,7 @@
     "@types/jsbarcode": "^3.11.4",
     "@zxing/ngx-scanner": "^21.0.0",
     "angularx-qrcode": "^21.0.4",
+    "idb": "^8.0.3",
     "jsbarcode": "^3.12.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

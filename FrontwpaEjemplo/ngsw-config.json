@@ -5,6 +5,7 @@
     {
       "name": "app",
       "installMode": "prefetch",
+      "updateMode": "prefetch",
       "resources": {
         "files": [
           "/favicon.ico",
@@ -21,43 +22,26 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": [
-          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
-        ]
+        "files": ["/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"]
       }
     }
   ],
   "dataGroups": [
     {
-      "name": "api-funkos",
+      "name": "api-funkos-cache",
       "urls": [
         "https://pruebaanteproyecto.onrender.com/api/funkos/**",
-        "https://pruebaanteproyecto.onrender.com/api/category/**"
+        "https://pruebaanteproyecto.onrender.com/api/category/**",
+        "https://pruebaanteproyecto.onrender.com/api/auth/**"
       ],
       "cacheConfig": {
-        "strategy": "freshness",
-        "maxSize": 100,
-        "maxAge": "1h",
-        "timeout": "5s"
-      }
-    },
-    {
-      "name": "api-cache-fallback",
-      "urls": [
-        "https://pruebaanteproyecto.onrender.com/**"
-      ],
-      "cacheConfig": {
-        "strategy": "performance",
-        "maxSize": 50,
-        "maxAge": "7d"
+        "strategy": "cache-first",
+        "maxSize": 200,
+        "maxAge": "24h",
+        "timeout": "3s"
       }
     }
   ],
-  "navigationUrls": [
-    "/**",
-    "!/**/*.*",
-    "!/**/*__*",
-    "!/**/*__*/**"
-  ],
-  "navigationRequestStrategy": "freshness"
+  "navigationUrls": ["/**", "!/**/*.*", "!/**/*__*", "!/**/*__*/**"],
+  "navigationRequestStrategy": "performance"
 }
